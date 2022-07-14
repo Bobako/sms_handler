@@ -1,0 +1,127 @@
+import datetime
+
+from flask import render_template, redirect, url_for, request, flash
+from flask_login import login_user, login_required, logout_user, current_user
+
+from sms_handler import app, db, manager
+from sms_handler.models import User, Message, Sub
+from sms_handler.forms_handler import parse_forms, update_objs
+
+
+@manager.unauthorized_handler
+def unauthorized():
+    return redirect(url_for("login_page") + f"?next={request.url}")
+
+
+@app.route("/login", methods=['post', 'get'])
+def login_page():
+    if current_user:
+        logout_user()
+    if request.method == "POST":
+        login = request.form.get("login")
+        password = request.form.get("password")
+        if not (user := db.session.query(User).filter(User.login == login).first()):
+            flash("Пользователь не найден")
+        else:
+            if not user.password == password:
+                flash("Неверный пароль")
+            else:
+                login_user(user)
+                user.is_authenticated = True
+                next_page = request.args.get('next')
+                if not next_page:
+                    next_page = url_for('index_page')
+                print("red")
+                db.session.commit()
+                return redirect(next_page)
+    return render_template("login.html")
+
+
+@app.route("/", methods=['post', 'get'])
+@login_required
+def index_page():
+    return render_template("sms_journal.html")
+
+
+@app.route("/users", methods=["post", "get"])
+def users_page():
+    if request.method == "POST":
+        form = parse_forms(request.form)
+        update_objs(db.session, form, User, not_nullable="login", primary_key_name="login")
+    users = db.session.query(User).all()
+    return render_template("users.html", users=users, current_user=current_user)
+
+
+@app.route("/subs", methods=["post", "get"])
+def subs_page():
+    if request.method == "POST":
+        form = parse_forms(request.form)
+        for sub in form.values():
+            if sub["last_sms_datetime"]:
+                sub["last_sms_datetime"] = datetime.datetime.strptime(sub["last_sms_datetime"], "%Y-%m-%dT%H:%M")
+            else:
+                sub["last_sms_datetime"] = None
+
+        update_objs(db.session, form, Sub)
+    return render_template("subs.html")
+
+
+"""# --------------- api --------------------#"""
+
+
+@app.route("/api/search/message", methods=["get"])
+def api_message_live_search():
+    date = request.args.get("date")
+    phone = request.args.get("phone")
+    text = request.args.get("text")
+    prim_status = request.args.get("prim_status")
+    sec_status = request.args.get("sec_status")
+    text_not_null = request.args.get("text_not_null")
+
+    query = db.session.query(Message)
+    if text_not_null == "true":
+        query = query.filter(Message.text != "")
+    if text:
+        query = query.filter(Message.text.ilike(f"%{text}%"))
+    if phone:
+        query = query.filter(Message.phone.ilike(f"%{phone}%"))
+    if prim_status:
+        prim_status = bool(int(prim_status))
+        query = query.filter(Message.primary_service_status == prim_status)
+    if sec_status:
+        sec_status = bool(int(sec_status))
+        query = query.filter(Message.secondary_service_status == sec_status)
+    if date:
+        start = datetime.datetime.strptime(date, "%Y-%m-%d")
+        end = start + datetime.timedelta(days=1)
+        query = query.filter(Message.datetime >= start).filter(Message.datetime <= end)
+    messages = query.all()
+    return render_template("messages_table_body.html", messages=messages)
+
+
+@app.route("/api/search/sub", methods=["get"])
+def api_sub_live_search():
+    date = request.args.get("date")
+    phone = request.args.get("phone")
+    name = request.args.get("name")
+    name_not_null = request.args.get("name_not_null")
+    query = db.session.query(Sub)
+    if name_not_null == "true":
+        query = query.filter(Sub.name != "")
+    if phone:
+        query = query.filter(Sub.phone.ilike(f"%{phone}%"))
+    if name:
+        query = query.filter(Sub.name.ilike(f"%{name}%"))
+    if date:
+        start = datetime.datetime.strptime(date, "%Y-%m-%d")
+        end = start + datetime.timedelta(days=1)
+        query = query.filter(Sub.last_sms_datetime >= start).filter(Sub.last_sms_datetime <= end)
+    subs = query.all()
+    return render_template("subs_table_body.html", subs=subs)
+
+
+@app.route("/api/resend", methods=["get"])
+def api_resend_message():
+    message_id = request.args.get("mid")
+    # TODO resend
+    return "OK"

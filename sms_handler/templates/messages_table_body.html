@@ -1,0 +1,16 @@
+{%for message in messages%}
+<tr>
+    <td>{{message.datetime.strftime('%d.%m.%Y %H:%M')}}</td>
+    <td>{{message.phone}}</td>
+    <td><p>{{message.text}}</p></td>
+
+    <td>{{message.primary_service_status_text}}</td>
+
+
+    <td id="{{message.id}}secondary_service_status">{{message.secondary_service_status_text}}</td>
+
+    <td>
+        <button class="multi_el" onclick="resend({{message.id}})">Повторить</button>
+    </td>
+</tr>
+{%endfor%}

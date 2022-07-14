@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" type="text/css" href="{{url_for('static',filename = 'styles.css')}}">
+    <link rel="stylesheet" type="text/css" href="{{url_for('static',filename = 'nice_tables.css')}}">
+    <script src="https://code.jquery.com/jquery-3.6.0.js"></script>
+    <script src="{{url_for('static', filename='script.js')}}"></script>
+    <script src="{{url_for('static', filename='antidpr.js')}}"></script>
+    <script src="{{url_for('static', filename='live_search.js')}}"></script>
+    <title>Subs</title>
+</head>
+<body>
+<main>
+    <h1>Справочник абонентов</h1>
+    <div id="subs">
+
+        <table class="nice_table">
+            <thead>
+            <tr>
+                <th>Имя</th>
+                <th>Телефон</th>
+                <th>Время последнего успешного смс</th>
+            </tr>
+            <tr>
+                <th><input id="name_search" type="text" onchange="subs_live_search(this)"></th>
+                <th><input id="phone_search" type="number" size="10" onkeyup="subs_live_search(this)"></th>
+                <th><input id="date_search" type="date" onchange="subs_live_search(this)"></th>
+            </tr>
+            <tr>
+                <th><input id="name_not_null_search" type="checkbox" onchange="subs_live_search(this)">
+                <label for="name_not_null_search">Не пуст</label></th>
+                <th></th>
+                <th></th>
+            </tr>
+            </thead>
+            <form id="sub_form" action="" method="post">
+                <tbody></tbody>
+            </form>
+        </table><br>
+        <input form="sub_form" class="micro_btn right" type="submit" value="Зберегти">
+
+    </div>
+</main>
+
+<nav>
+    <button class="nav_button hiden_nav_button"></button>
+    <div class="hidden_nav_div">
+        <a href="{{url_for('index_page')}}">Журнал сообщений</a>
+        <!--<a href="{{url_for('subs_page')}}">Журнал абонентов</a>-->
+        <a href="{{url_for('users_page')}}">Користувачі</a>
+        <a href="{{url_for('login_page')}}">Выход</a>
+    </div>
+</nav>
+
+</body>
+</html>
+
+<script>
+    subs_live_search($("#phone_search"));
+</script>

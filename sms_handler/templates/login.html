@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" type="text/css" href="{{url_for('static',filename = 'styles.css')}}">
+    <script src="{{url_for('static', filename='antidpr.js')}}"></script>
+    <title>Login</title>
+</head>
+<body>
+<main>
+        <form id="auth_form" action="" method="post">
+            <p class="warning">
+                {% with message = get_flashed_messages() %}
+                {% if message%}
+                {{message[0]}}
+                {% endif %}
+                {% endwith %}
+            </p>
+            <input type="text" name="login" class="white_box" placeholder="Логин"><br>
+            <input type="password" name="password" class="white_box" placeholder="Пароль"><br>
+            <input type="submit" value="Авторизуватись" class="white_box btn">
+        </form>
+</main>
+</body>
+</html>

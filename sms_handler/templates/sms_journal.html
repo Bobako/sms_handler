@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" type="text/css" href="{{url_for('static',filename = 'styles.css')}}">
+    <link rel="stylesheet" type="text/css" href="{{url_for('static',filename = 'nice_tables.css')}}">
+    <script src="https://code.jquery.com/jquery-3.6.0.js"></script>
+    <script src="{{url_for('static', filename='script.js')}}"></script>
+    <script src="{{url_for('static', filename='antidpr.js')}}"></script>
+    <script src="{{url_for('static', filename='live_search.js')}}"></script>
+    <script src="{{url_for('static', filename='resend.js')}}"></script>
+    <title>Messages</title>
+</head>
+<body>
+<main>
+    <h1>Журнал сообщений</h1>
+    <div id="messages">
+
+        <table class="nice_table">
+            <thead>
+            <tr>
+                <th>Дата и время</th>
+                <th>Номер телефона</th>
+                <th>Текст</th>
+                <th>Cтатус на smsc</th>
+                <th>Cтатус на fly-sms</th>
+                <th></th>
+
+            </tr>
+            <tr>
+                <th><input id="date_search" type="date" onchange="messages_live_search(this)"></th>
+                <th><input id="phone_search" type="number" size="10" onkeyup="messages_live_search(this)"></th>
+                <th><input id="text_search" type="text" size="12" placeholder="Найти.." onkeyup="messages_live_search(this)">
+                </th>
+                <th><select id="prim_status_search" onchange="messages_live_search(this)">
+                    <option value="" selected></option>
+                    <option value="1">Успех</option>
+                    <option value="0">Ошибка</option>
+                </select></th>
+                <th><select id="sec_status_search" onchange="messages_live_search(this)">
+                    <option value="" selected></option>
+                    <option value="1">Успех</option>
+                    <option value="0">Ошибка</option>
+                </select></th>
+                <th></th>
+
+            </tr>
+            <tr>
+                <th></th>
+                <th></th>
+                <th><input id="text_not_null_search" type="checkbox" onchange="messages_live_search(this)">
+                <label for="text_not_null_search">Не пуст</label></th>
+                <th></th>
+                <th></th>
+                <th></th>
+            </tr>
+            </thead>
+
+            <tbody></tbody>
+        </table>
+
+
+    </div>
+</main>
+
+<nav>
+    <button class="nav_button hiden_nav_button"></button>
+    <div class="hidden_nav_div">
+        <!--<a href="{{url_for('index_page')}}">Журнал сообщений</a>-->
+        <a href="{{url_for('subs_page')}}">Журнал абонентов</a>
+        <a href="{{url_for('users_page')}}">Користувачі</a>
+        <a href="{{url_for('login_page')}}">Выход</a>
+    </div>
+</nav>
+
+</body>
+</html>
+
+<script>
+    messages_live_search($("#date_search"));
+</script>

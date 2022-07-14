@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" type="text/css" href="{{url_for('static',filename = 'styles.css')}}">
+    <script src="https://code.jquery.com/jquery-3.6.0.js"></script>
+    <script src="{{url_for('static', filename='script.js')}}"></script>
+    <script src="{{url_for('static', filename='antidpr.js')}}"></script>
+    <title>Users</title>
+</head>
+<body>
+<main>
+    <h1>Користувачі</h1>
+    <div id="users">
+        <form id="users_form" action="" method="post">
+            {%for user in users%}
+            <div class="db_el">
+                <input type="text" name="{{user.login}}:login" placeholder="login" value="{{user.login}}">
+                <input type="text" name="{{user.login}}:password" placeholder="password" value="{{user.password}}">
+                {% if current_user.login != user.login%}
+                    <span class="cb_span">
+                    <input type="checkbox" id="{{user.login}}:delete" name="{{user.login}}:delete">
+                    <label for="{{user.login}}:delete">Видалити</label>
+                    </span>
+                {%endif%}
+
+            </div>
+
+
+            {%endfor%}
+            <div id="new_el_div">
+
+            </div>
+            <p class="warning">
+                {% with message = get_flashed_messages() %}
+                {% if message%}
+                {{message[0]}}
+                {% endif %}
+                {% endwith %}
+            </p>
+
+            <input class="micro_btn right" type="submit" value="Зберегти">
+        </form>
+        <button class="micro_btn" id="new_el_button">Новий користувач</button>
+        <div class="template">
+            <input type="text" name="NEW:login" placeholder="login">
+            <input type="text" name="NEW:password" placeholder="password">
+        </div>
+
+
+    </div>
+</main>
+
+<nav>
+    <button class="nav_button hiden_nav_button"></button>
+    <div class="hidden_nav_div">
+        <a href="{{url_for('index_page')}}">Журнал сообщений</a>
+        <a href="{{url_for('subs_page')}}">Журнал абонентов</a>
+        <!--<a href="{{url_for('users_page')}}">Пользователи</a>-->
+        <a href="{{url_for('login_page')}}">Выход</a>
+    </div>
+</nav>
+
+</body>
+</html>
