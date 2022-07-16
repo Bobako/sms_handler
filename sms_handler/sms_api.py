@@ -34,6 +34,7 @@ class SMSAPI:
         self.smsc_fmt = smsc_fmt
         self.fly_sms_auth_key = fly_sms_auth_key
         self.fly_sms_service_name = fly_sms_service_name
+        self.auto_send = False
 
     @staticmethod
     def from_config(session):
@@ -86,9 +87,11 @@ class SMSAPI:
     def add_sms(self, sms_list: list[Message]):
         """Create sms and subscribers objects in database"""
         for sms in sms_list:
-            if sms.datetime > datetime.datetime.now() - datetime.timedelta(seconds=60*4+10):
+            if sms.datetime > datetime.datetime.now() - datetime.timedelta(seconds=60 * 4 + 10):
                 if not self.session.query(Message).filter(Message.id == sms.id).first():
-                    is_sent, status_str = self.send_sms(sms.text, sms.phone)
+                    is_sent, status_str = False, "Не отправлялось"
+                    if self.auto_send:
+                        is_sent, status_str = self.send_sms(sms.text, sms.phone)
                     sms.secondary_service_status = is_sent
                     sms.secondary_service_status_text = status_str
                     self.session.add(sms)
@@ -100,7 +103,8 @@ class SMSAPI:
                         self.session.add(sub)
                     self.session.commit()
 
-    def run(self):
+    def run(self, auto_send=False):
+        self.auto_send = auto_send
         while True:
             sms_list = self.get_sms()
             self.add_sms(sms_list)
