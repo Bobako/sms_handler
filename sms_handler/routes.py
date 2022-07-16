@@ -6,7 +6,6 @@ from flask_login import login_user, login_required, logout_user, current_user
 from sms_handler import app, db, manager, sms_api
 from sms_handler.models import User, Message, Sub
 from sms_handler.forms_handler import parse_forms, update_objs
-from sms_handler.cfg import config
 
 
 @manager.unauthorized_handler
@@ -14,7 +13,7 @@ def unauthorized():
     return redirect(url_for("login_page") + f"?next={request.url}")
 
 
-@app.route(f"{config['SITE']['base_url']}/login", methods=['post', 'get'])
+@app.route("/login", methods=['post', 'get'])
 def login_page():
     if current_user:
         logout_user()
@@ -38,13 +37,13 @@ def login_page():
     return render_template("login.html")
 
 
-@app.route(f"{config['SITE']['base_url']}/", methods=['post', 'get'])
+@app.route("/", methods=['post', 'get'])
 @login_required
 def index_page():
     return render_template("sms_journal.html")
 
 
-@app.route(f"{config['SITE']['base_url']}/users", methods=["post", "get"])
+@app.route("/users", methods=["post", "get"])
 def users_page():
     if request.method == "POST":
         form = parse_forms(request.form)
@@ -53,7 +52,7 @@ def users_page():
     return render_template("users.html", users=users, current_user=current_user)
 
 
-@app.route(f"{config['SITE']['base_url']}/subs", methods=["post", "get"])
+@app.route("/subs", methods=["post", "get"])
 def subs_page():
     if request.method == "POST":
         form = parse_forms(request.form)
@@ -70,7 +69,7 @@ def subs_page():
 """# --------------- api --------------------#"""
 
 
-@app.route(f"{config['SITE']['base_url']}/api/search/message", methods=["get"])
+@app.route("/api/search/message", methods=["get"])
 def api_message_live_search():
     date = request.args.get("date")
     phone = request.args.get("phone")
@@ -102,7 +101,7 @@ def api_message_live_search():
     return render_template("messages_table_body.html", messages=messages)
 
 
-@app.route(f"{config['SITE']['base_url']}/api/search/sub", methods=["get"])
+@app.route("/api/search/sub", methods=["get"])
 def api_sub_live_search():
     date = request.args.get("date")
     phone = request.args.get("phone")
@@ -128,7 +127,7 @@ def api_sub_live_search():
 sms_api_worker = sms_api.SMSAPI.from_config(db.session)
 
 
-@app.route(f"{config['SITE']['base_url']}/api/resend", methods=["get"])
+@app.route("/api/resend", methods=["get"])
 def api_resend_message():
     message_id = request.args.get("mid")
     message = db.session.query(Message).filter(Message.id == message_id).one()
