@@ -125,11 +125,14 @@ def api_sub_live_search():
     return render_template("subs_table_body.html", subs=subs)
 
 
+sms_api_worker = sms_api.SMSAPI.from_config(db.session)
+
+
 @app.route(f"{config['SITE']['base_url']}/api/resend", methods=["get"])
 def api_resend_message():
     message_id = request.args.get("mid")
     message = db.session.query(Message).filter(Message.id == message_id).one()
-    is_sent, status = sms_api.send_sms(message.text, message.phone)
+    is_sent, status = sms_api_worker.send_sms(message.text, message.phone)
     if is_sent:
         sub = db.session.query(Sub).filter(Sub.phone == message.phone).one()
         sub.last_sms_datetime = datetime.datetime.now()

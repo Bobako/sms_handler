@@ -11,7 +11,7 @@ function messages_live_search(obj) {
 
     let req = new XMLHttpRequest();
     req.open("GET",
-        "sms/api/search/message?date=" + date + "&phone=" + phone + "&text=" + text + "&prim_status="
+        "api/search/message?date=" + date + "&phone=" + phone + "&text=" + text + "&prim_status="
         + prim_status + "&sec_status=" + sec_status + "&text_not_null="+text_not_null,
         false);
     req.send(null);
@@ -28,7 +28,7 @@ function subs_live_search(obj) {
 
     let req = new XMLHttpRequest();
     req.open("GET",
-        "sms/api/search/sub?date=" + date + "&phone=" + phone + "&name=" + name + "&name_not_null=" + name_not_null,
+        "api/search/sub?date=" + date + "&phone=" + phone + "&name=" + name + "&name_not_null=" + name_not_null,
         false);
     req.send(null);
     $("tbody").empty();

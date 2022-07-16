@@ -3,6 +3,6 @@
   <input form="sub_form" hidden value="{{sub.id}}">
   <td><input form="sub_form" type="text" name="{{sub.id}}:name" placeholder="Имя" value="{{sub.name}}"></td>
   <td><input form="sub_form" type="number" name="{{sub.id}}:phone" value="{{sub.phone}}"></td>
-  <td><input form="sub_form" type="datetime-local" name="{{sub.id}}:last_sms_datetime" value="{{sub.last_sms_datetime}}"></td>
+  <td>{{sub.last_sms_datetime.strftime('%d.%m.%Y %H:%M')}}</td>
 </tr>
 {%endfor%}
