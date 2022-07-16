@@ -3,9 +3,10 @@ import datetime
 from flask import render_template, redirect, url_for, request, flash
 from flask_login import login_user, login_required, logout_user, current_user
 
-from sms_handler import app, db, manager
+from sms_handler import app, db, manager, sms_api
 from sms_handler.models import User, Message, Sub
 from sms_handler.forms_handler import parse_forms, update_objs
+from sms_handler.cfg import config
 
 
 @manager.unauthorized_handler
@@ -13,7 +14,7 @@ def unauthorized():
     return redirect(url_for("login_page") + f"?next={request.url}")
 
 
-@app.route("/login", methods=['post', 'get'])
+@app.route(f"{config['SITE']['base_url']}/login", methods=['post', 'get'])
 def login_page():
     if current_user:
         logout_user()
@@ -37,13 +38,13 @@ def login_page():
     return render_template("login.html")
 
 
-@app.route("/", methods=['post', 'get'])
+@app.route(f"{config['SITE']['base_url']}/", methods=['post', 'get'])
 @login_required
 def index_page():
     return render_template("sms_journal.html")
 
 
-@app.route("/users", methods=["post", "get"])
+@app.route(f"{config['SITE']['base_url']}/users", methods=["post", "get"])
 def users_page():
     if request.method == "POST":
         form = parse_forms(request.form)
@@ -52,7 +53,7 @@ def users_page():
     return render_template("users.html", users=users, current_user=current_user)
 
 
-@app.route("/subs", methods=["post", "get"])
+@app.route(f"{config['SITE']['base_url']}/subs", methods=["post", "get"])
 def subs_page():
     if request.method == "POST":
         form = parse_forms(request.form)
@@ -69,7 +70,7 @@ def subs_page():
 """# --------------- api --------------------#"""
 
 
-@app.route("/api/search/message", methods=["get"])
+@app.route(f"{config['SITE']['base_url']}/api/search/message", methods=["get"])
 def api_message_live_search():
     date = request.args.get("date")
     phone = request.args.get("phone")
@@ -95,11 +96,13 @@ def api_message_live_search():
         start = datetime.datetime.strptime(date, "%Y-%m-%d")
         end = start + datetime.timedelta(days=1)
         query = query.filter(Message.datetime >= start).filter(Message.datetime <= end)
+    query = query.order_by(Message.datetime.desc())
+    query = query.limit(200)
     messages = query.all()
     return render_template("messages_table_body.html", messages=messages)
 
 
-@app.route("/api/search/sub", methods=["get"])
+@app.route(f"{config['SITE']['base_url']}/api/search/sub", methods=["get"])
 def api_sub_live_search():
     date = request.args.get("date")
     phone = request.args.get("phone")
@@ -116,12 +119,21 @@ def api_sub_live_search():
         start = datetime.datetime.strptime(date, "%Y-%m-%d")
         end = start + datetime.timedelta(days=1)
         query = query.filter(Sub.last_sms_datetime >= start).filter(Sub.last_sms_datetime <= end)
+    query = query.order_by(Sub.last_sms_datetime.desc())
+    query = query.limit(200)
     subs = query.all()
     return render_template("subs_table_body.html", subs=subs)
 
 
-@app.route("/api/resend", methods=["get"])
+@app.route(f"{config['SITE']['base_url']}/api/resend", methods=["get"])
 def api_resend_message():
     message_id = request.args.get("mid")
-    # TODO resend
-    return "OK"
+    message = db.session.query(Message).filter(Message.id == message_id).one()
+    is_sent, status = sms_api.send_sms(message.text, message.phone)
+    if is_sent:
+        sub = db.session.query(Sub).filter(Sub.phone == message.phone).one()
+        sub.last_sms_datetime = datetime.datetime.now()
+        message.secondary_service_status = True
+        message.secondary_service_status_text = status
+        db.session.commit()
+    return ['Не удалось отправить', 'Отправлено успешно'][is_sent] + (f": {status}" if not is_sent else '')

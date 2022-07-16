@@ -1,4 +1,3 @@
-import json
 import time
 from threading import Lock
 
@@ -20,7 +19,7 @@ CODES = {
 }
 
 
-class SMSService:
+class SMSAPI:
     def __init__(self,
                  session,
                  login: str,
@@ -39,7 +38,7 @@ class SMSService:
     @staticmethod
     def from_config(session):
         """Factory; all params from config"""
-        return SMSService(
+        return SMSAPI(
             session=session,
             login=config["SMS_SERVICE"]["smsc_login"],
             password=config["SMS_SERVICE"]["smsc_password"],
