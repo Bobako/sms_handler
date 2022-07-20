@@ -56,12 +56,6 @@ def users_page():
 def subs_page():
     if request.method == "POST":
         form = parse_forms(request.form)
-        for sub in form.values():
-            if sub["last_sms_datetime"]:
-                sub["last_sms_datetime"] = datetime.datetime.strptime(sub["last_sms_datetime"], "%Y-%m-%dT%H:%M")
-            else:
-                sub["last_sms_datetime"] = None
-
         update_objs(db.session, form, Sub)
     return render_template("subs.html")
 
