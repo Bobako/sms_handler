@@ -63,7 +63,11 @@ class SMSAPI:
               f"&end={end.strftime('%d.%m.%Y')}" \
               f"&fmt={self.smsc_fmt}" \
               f"&cnt={cnt}"
-        r = requests.get(url)
+        try:
+            r = requests.get(url)
+        except Exception as ex:
+            logging.error(f"{ex} while 'sms_service.get_sms'")
+            return []
         if r.status_code != 200:
             logging.error(f"{r.status_code} response status code while 'sms_service.get_sms'")
             return []
@@ -129,7 +133,10 @@ class SMSAPI:
                 }
             }
         }
-        r = requests.post("https://sms-fly.ua/api/v2/api.php", json=data_dict_)
+        try:
+            r = requests.post("https://sms-fly.ua/api/v2/api.php", json=data_dict_)
+        except Exception as ex:
+            return False, "Request error"
         code = r.status_code
         if code != 200:
             return False, CODES.get(code, "Error")
