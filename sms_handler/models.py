@@ -28,6 +28,7 @@ class Message(db.Model):
     primary_service_status = db.Column(db.Boolean)
     primary_service_status_text = db.Column(db.String)
     secondary_service_status = db.Column(db.Boolean)
+    secondary_service_id = db.Column(db.String)
     secondary_service_status_text = db.Column(db.String)
 
     def __init__(self, id_, datetime, phone, text, primary_service_status, secondary_service_status,
@@ -40,6 +41,7 @@ class Message(db.Model):
         self.secondary_service_status = secondary_service_status
         self.primary_service_status_text = primary_service_status_text
         self.secondary_service_status_text = secondary_service_status_text
+        self.secondary_service_id = None
 
     def __repr__(self):
         return f"{self.id}, {self.phone}, {self.text}, {self.primary_service_status}"
