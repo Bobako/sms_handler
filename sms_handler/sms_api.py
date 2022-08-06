@@ -113,7 +113,7 @@ class SMSAPI:
                 if not self.session.query(Message).filter(Message.id == sms.id).first():
                     status_str, sms_id = "Не отправлялось", ""
                     if self.auto_send:
-                        is_sent, status_str = self.send_sms(sms.text, sms.phone)
+                        status_str, sms_id = self.send_sms(sms.text, sms.phone)
                     sms.secondary_service_id = sms_id
                     sms.secondary_service_status = False
                     sms.secondary_service_status_text = status_str
@@ -138,9 +138,7 @@ class SMSAPI:
             else:
                 time.sleep(1)
 
-
-
-    def send_sms(self, text: str, phone: str) -> (bool, str, str):
+    def send_sms(self, text: str, phone: str) -> (str, str):
         """Send SMS via https://sms-fly.ua/. Returns text_status and message_id in service """
         data_dict_ = {
             "auth": {
