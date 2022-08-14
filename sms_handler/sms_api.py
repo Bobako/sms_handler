@@ -98,7 +98,7 @@ class SMSAPI:
             sms_id = self.pending_sms.get()
             sms_status_text = self.get_message_status(sms_id)
             message = self.session.query(Message).filter(Message.secondary_service_id == sms_id).one()
-            message.secondary_service_status_text = sms_status_text
+            message.secondary_service_status_text = sms_status_text.lower().capitalize()
             is_sent = sms_status_text in ["SENT", "DELIVRD", "VIEWED"]
             message.secondary_service_status = is_sent
             if is_sent:
@@ -193,7 +193,7 @@ class SMSAPI:
             return CODES.get(code, "Error")
 
         try:
-            message_status = r.json()["data"]["sms"]["status"].lower().capitalize()
+            message_status = r.json()["data"]["sms"]["status"]
         except Exception:
             return "Error"
         else:
