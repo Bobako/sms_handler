@@ -116,7 +116,7 @@ class SMSAPI:
                         status_str, sms_id = self.send_sms(sms.text, sms.phone)
                     sms.secondary_service_id = sms_id
                     sms.secondary_service_status = False
-                    sms.secondary_service_status_text = status_str
+                    sms.secondary_service_status_text = status_str.lower().capitalize()
 
                     self.session.add(sms)
                     if not self.session.query(Sub).filter(Sub.phone == sms.phone).first():
@@ -166,7 +166,7 @@ class SMSAPI:
             return CODES.get(code, "Error"), ""
 
         try:
-            message_status = r.json()["data"]["sms"]["status"].lower().capitalize()
+            message_status = r.json()["data"]["sms"]["status"]
             message_id = r.json()["data"]["messageID"]
         except Exception:
             return "Error", ""
