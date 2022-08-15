@@ -34,11 +34,11 @@ def create_dummy_data(session, ):
         ]:
             session.add(sub)
     if not session.query(Message).first():
-        for i in range(30):
+        for i in range(1, 30):
             primary_status = bool(random.randint(0, 1))
             secondary_status = bool(random.randint(0, 1))
             session.add(
-                Message(1, datetime.datetime.now() - datetime.timedelta(days=random.randint(2, 30)),
+                Message(i, datetime.datetime.now() - datetime.timedelta(days=random.randint(2, 30)),
                         random.randint(89990000000, 89999999999), f"Ваш код: {random.randint(1000, 9999)}",
                         primary_status, secondary_status,
                         ["Ошибка", "Успех"][primary_status], ["Ошибка", "Успех"][secondary_status]
