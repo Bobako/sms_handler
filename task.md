@@ -1,4 +1,3 @@
-[Forwarded from Vitaliy Grabovs'kyi]
 ТЗ "Перехват неудачных  смс с SMSС"
 
 Описание: 
@@ -9,8 +8,6 @@
 1) https://smsc.ua/api/http/get_data/outbox/#menu  - основной сервис 
 2) https://sms-fly.ua/public/api.v2.02.pdf  - резервный сервис 
  
-ПРИМЕР ЗАПРОСА ДЛЯ SMSC.ua 
-https://smsc.ua/sys/get.php?get_messages=1&login=yoki.ua&psw=f2NBYbt9RyvT7D3&start=22.05.2022&end=22.05.2022&fmt=3&cnt=50 
  
  
 ЗАДАНИЕ: 
