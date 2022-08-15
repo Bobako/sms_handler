@@ -52,12 +52,12 @@ class Sub(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     phone = db.Column(db.String)
     name = db.Column(db.String)
-    last_sms_datetime = db.Column(db.DateTime)
+    last_message_datetime = db.Column(db.DateTime)
 
-    def __init__(self, phone, name="", last_sms_datetime=None):
+    def __init__(self, phone, name="", last_message_datetime=None):
         self.phone = phone
         self.name = name
-        self.last_sms_datetime = last_sms_datetime
+        self.last_message_datetime = last_message_datetime
 
 
 @manager.user_loader

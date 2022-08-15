@@ -111,8 +111,8 @@ def api_sub_live_search():
     if date:
         start = datetime.datetime.strptime(date, "%Y-%m-%d")
         end = start + datetime.timedelta(days=1)
-        query = query.filter(Sub.last_sms_datetime >= start).filter(Sub.last_sms_datetime <= end)
-    query = query.order_by(Sub.last_sms_datetime.desc())
+        query = query.filter(Sub.last_message_datetime >= start).filter(Sub.last_message_datetime <= end)
+    query = query.order_by(Sub.last_message_datetime.desc())
     query = query.limit(200)
     subs = query.all()
     return render_template("subs_table_body.html", subs=subs)
@@ -128,7 +128,7 @@ def api_resend_message():
     is_sent, status = sms_api_worker.send_sms(message.text, message.phone)
     if is_sent:
         sub = db.session.query(Sub).filter(Sub.phone == message.phone).one()
-        sub.last_sms_datetime = datetime.datetime.now()
+        sub.last_message_datetime = datetime.datetime.now()
         message.secondary_service_status = True
         message.secondary_service_status_text = status
         db.session.commit()

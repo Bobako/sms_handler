@@ -1,6 +1,9 @@
 def parse_forms(form, checkboxes: list[str] = []):
-    """Parses web form (which is a table, every row represent an object)
-    checkboxes are a list of input:[type=checkbox]`s names"""
+    """Parses web form (where input's name = {{object.id}}:property_name;
+    If object must be created and so hasn't id, set input's name = NEW:property_name)
+    checkboxes are a list of input:[type=checkbox]`s property_names.
+    Returns a dict {object.id: dict-represented object}, where dict-represented object
+    is a dict {property_name: value}"""
     result = {}
     for key, val in form.lists():
         id_, arg = key.split(":")

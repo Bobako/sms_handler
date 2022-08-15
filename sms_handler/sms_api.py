@@ -54,7 +54,7 @@ class SMSAPI:
                 end: datetime.datetime | None = None,
                 cnt=1000  # max amount of sms
                 ) -> list[Message]:
-        """ Query sms info from smsc service"""
+        """Query sms info from smsc service"""
         if not start or not end:
             start = datetime.datetime.now() - datetime.timedelta(days=1)
             end = start + datetime.timedelta(days=1)
@@ -78,12 +78,12 @@ class SMSAPI:
             return []
         sms_list = []
         for sms_dict in r.json():
-            if sms_dict["status"] == 25:  # так как по тз обрабатываем только смс со статусом недоступный номер
+            if sms_dict["status"] == 25:  # Handle messages with this status only, due to task
                 sms_list.append(Message(int(sms_dict['int_id']),
                                         datetime.datetime.strptime(sms_dict['send_date'], "%d.%m.%Y %H:%M:%S"),
                                         sms_dict['phone'],
                                         sms_dict['message'],
-                                        False,  # Так как успешные смс не обрабатываем, всегда фолс
+                                        False,
                                         False,
                                         sms_dict['status_name'],
                                         ""
@@ -103,9 +103,9 @@ class SMSAPI:
             message.secondary_service_status = is_sent
             if is_sent:
                 sub = self.session.query(Sub).filter(Sub.phone == message.phone).first()
-                sub.last_sms_datetime = message.datetime
+                sub.last_message_datetime = message.datetime
             elif sms_status_text in ["ACCEPTD", "PENDING", "INPROGRESS", "MODERATION"]:
-                self.pending_sms.put(sms_id)  # статус будет проверен снова в следующий раз
+                self.pending_sms.put(sms_id)  # check status next time
         self.session.commit()
 
         for sms in sms_list:
