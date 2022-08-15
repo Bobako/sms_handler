@@ -11,19 +11,19 @@
 </head>
 <body>
 <main>
-    <h1>Користувачі</h1>
+    <h1>Пользователи</h1>
     <div id="users">
         <form id="users_form" action="" method="post">
             {%for user in users%}
             <div class="db_el">
                 <input type="text" name="{{user.login}}:login" placeholder="login" value="{{user.login}}">
                 <input type="text" name="{{user.login}}:password" placeholder="password" value="{{user.password}}">
-                {% if current_user.login != user.login%}
+
                     <span class="cb_span">
                     <input type="checkbox" id="{{user.login}}:delete" name="{{user.login}}:delete">
                     <label for="{{user.login}}:delete">Видалити</label>
                     </span>
-                {%endif%}
+
 
             </div>
 

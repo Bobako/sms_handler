@@ -17,23 +17,12 @@ def unauthorized():
 def login_page():
     if current_user:
         logout_user()
-    if request.method == "POST":
-        login = request.form.get("login")
-        password = request.form.get("password")
-        if not (user := db.session.query(User).filter(User.login == login).first()):
-            flash("Пользователь не найден")
-        else:
-            if not user.password == password:
-                flash("Неверный пароль")
-            else:
-                login_user(user)
-                user.is_authenticated = True
-                next_page = request.args.get('next')
-                if not next_page:
-                    next_page = url_for('index_page')
-                print("red")
-                db.session.commit()
-                return redirect(next_page)
+    if request.method == "POST":    # validation disabled in demo
+        next_page = request.args.get('next')
+        if not next_page:
+            next_page = url_for('index_page')
+        return redirect(next_page)
+
     return render_template("login.html")
 
 

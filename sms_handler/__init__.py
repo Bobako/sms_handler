@@ -20,8 +20,9 @@ app.wsgi_app = DispatcherMiddleware(
 
 from sms_handler import models, routes
 from sms_handler.sms_api import SMSAPI
-from sms_handler.database_shortcuts import create_admin
+from sms_handler.database_shortcuts import create_admin, create_dummy_data
 
 db.create_all()
 create_admin(db.session, models.User)
+create_dummy_data(db.session)  # for demonstration
 sms_api_worker = SMSAPI.from_config(db.session)
