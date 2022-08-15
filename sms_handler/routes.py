@@ -27,7 +27,6 @@ def login_page():
 
 
 @app.route("/", methods=['post', 'get'])
-@login_required
 def index_page():
     return render_template("sms_journal.html")
 
