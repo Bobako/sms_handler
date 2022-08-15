@@ -44,6 +44,7 @@ def index_page():
 
 
 @app.route("/users", methods=["post", "get"])
+@login_required
 def users_page():
     if request.method == "POST":
         form = parse_forms(request.form)
@@ -53,6 +54,7 @@ def users_page():
 
 
 @app.route("/subs", methods=["post", "get"])
+@login_required
 def subs_page():
     if request.method == "POST":
         form = parse_forms(request.form)
