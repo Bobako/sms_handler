@@ -6,8 +6,8 @@
 [ТЗ на проект](github.com/Bobako/sms_handler/task.md)
 
 Инструменты, использованные в проекте:
-    - Python (Flask, SQLAlchemy, а также менее значимые библиотеки)
-    - HTML, CSS, JS (JQuery)
+     - Python (Flask, SQLAlchemy, а также менее значимые библиотеки)
+     - HTML, CSS, JS (JQuery)
 
 Потрогать демку проекта можно [тут](bobako.site/sms/). В демонстрационной версии отключена проверка полей при входе, запросы к реальному АПИ не совершаются, БД заполнена случайными данными. Демка развернута на Ubuntu 20.04 средствами NGINX, Gunicorn, Supervisord.
 
